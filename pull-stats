@@ -1,0 +1,246 @@
+ <?php
+  
+  Function convertToHoursMins($time, $format = '%d:%d') {
+    settype($time, 'integer');
+    if ($time < 1) {
+        return;
+    }
+    $hours = floor($time/60);
+    $minutes = $time%60;
+    return sprintf($format, $hours, $minutes);
+}
+      
+            
+   if (isset($_GET['submit'])) {
+   $username = $_GET["username"]; 
+// i made this and I am so proud lol          
+  
+   
+ 
+  echo '<br />', '<div class="alert alert-success">Success! Here are stats for @'.$username.'</div>';
+   
+  $url = "http://twitter.com/users/show/" . $username;
+  $response = file_get_contents ( $url );
+  $Profile_Info = new SimpleXMLElement ( $response );
+  $name = $Profile_Info->name;
+  $followers = $Profile_Info->followers_count;
+  $following = $Profile_Info->friends_count;
+  $favorites = $Profile_Info->favourites_count;
+  $location = $Profile_Info->location;
+  $tweets = $Profile_Info->statuses_count;
+  $month = substr($Profile_Info->created_at,3,7);
+  $year = substr($Profile_Info->created_at, -4);
+   
+
+  // for calculations
+  $time_Reading = $following * 1.5;
+  $time_Tweeting = $tweets * 2.0;
+  
+  // cut down location string
+  $location = (strlen($location) > 17) ? substr($location,0,17).'...' : $location;
+   
+  
+  // top row
+  echo '<div class="row-fluid">';
+  echo '<div class="span6 well">';
+  // profile image
+  echo '<img id="profilepic" width="73px;" height="73px;" src=https://api.twitter.com/1/users/profile_image?screen_name='. $username. '&size=bigger>',
+  // username
+  '<span style="font-size:28px;">','<strong>'. $name. '</strong>','</span>','<br />';
+  
+   echo "User Type: "; 
+   
+   // switch statement gives user type
+          switch ($tweets) {
+      
+     case $tweets <= 200:
+         echo '<strong>',"Invisible",'</strong>';
+          break;         
+              
+     case $tweets <= 400:
+         echo '<strong>',"Careful Tweeter",'</strong>';
+          break; 
+              
+     case $tweets <= 800:
+         echo '<strong>',"Average Tweeter",'</strong>';
+          break;
+      
+       case $tweets <= 1250:
+         echo '<strong>',"Average User",'</strong>';
+          break;
+      
+      case $tweets <= 2000:
+         echo '<strong>',"Conversationalist",'</strong>';
+          break;
+      
+      case $tweets <= 3000:
+         echo '<strong>',"Tweetaholic",'</strong>';
+          break;
+      
+      case $tweets <= 5000:
+         echo '<strong>',"Very Active",'</strong>';
+          break;
+      
+      case $tweets >= 8000:
+         echo '<strong>',"Timeline Filler",'</strong>';
+          break;
+      
+  }
+  
+  echo '<br />';
+  
+  echo "Friendliness: "; 
+          
+  // switch statement gives friendliness level  
+          switch ($favorites) {
+      
+      
+     case $favorites === 0:
+         echo '<strong>',"ZERO - Hates People",'</strong>';
+          break;         
+              
+     case $favorites <= 200:
+         echo '<strong>',"Grinch-level",'</strong>';
+          break;
+      
+       case $favorites <= 350:
+         echo '<strong>',"2/10",'</strong>';
+          break;
+      
+      case $favorites <= 450:
+         echo '<strong>',"4/10",'</strong>';
+          break;
+      
+      case $favorites <= 550:
+         echo '<strong>',"5/10",'</strong>';
+          break;
+      
+       case $favorites <= 650:
+         echo '<strong>',"6/10",'</strong>';
+          break;
+      
+       case $favorites <= 850:
+         echo '<strong>',"7/10",'</strong>';
+          break;
+      
+      case $favorites <= 1250:
+         echo '<strong>',"7.5/10",'</strong>';
+          break;
+      
+      case $favorites <= 1550:
+         echo '<strong>',"8/10",'</strong>';
+          break;
+      
+      case $favorites <= 2000:
+         echo '<strong>',"8.5/10",'</strong>';
+          break;
+      
+      case $favorites <= 2500:
+         echo '<strong>',"9/10",'</strong>';
+           break;
+      case $favorites > 2501:
+         echo '<strong>',"10/10 LIKE CRAZY FRIENDLY",'</strong>';
+          
+          break;   
+  }
+  
+  echo '</div>';
+ 
+  // 2nd column top row
+  echo '<div class="span3 well">';
+  echo '<i class="icon-ok"> </i>'," Followers : ", '<strong>'.($followers). '</strong>', '<br />'; 
+  echo '<i class="icon-minus"> </i>'," Following : ",'<strong>'.$following. '</strong>','<br />';
+  echo '<i class="icon-comment"> </i>'," Tweets : ",'<strong>'.$tweets. '</strong>','<br />','<br />','</div>';
+  
+  // last column top row
+  echo '<div class="span3 well">';
+  echo '<i class="icon-star"> </i>'," Favorites : ",'<strong>'.$favorites. '</strong>','<br />';
+  echo '<i class="icon-map-marker"> </i>',"  ",'<str4ong>'; 
+  
+  // if location is null
+  switch ($location) {  
+     case $location === null:
+         echo '<strong>',"Maybe invisible.",'</strong>';
+          break;                 
+     default:
+         echo $location;
+          break; 
+  }
+  echo '</strong>','<br />'; 
+  echo '<i class="icon-calendar"> </i>'," Joined: ",'<strong>'. $month , ", ", $year . '</strong>', '<br /><br />', '</div>', '</div>';
+  
+
+  // 2nd row 1st column
+    
+   echo '<div class="row-fluid">';
+   echo '<div class="span6 well">';
+   echo '<h4 style="text-align:center; color: #969696; font-weight: lighter;">',"Approximate time spent tweeting in life: ", '</h4>', '<strong>', '<br />', 
+          '<h1 style="text-align:center; color: #2f96b4; font-weight: bold;">'. convertToHoursMins($time_Tweeting, '%d hours, %d minutes'),'</strong>', '</h1>','<br />', '</div>';
+
+  // 2nd column 2nd row
+   echo '<div class="span6 well">';
+   echo '<h4 style="text-align:center; color: #969696; font-weight: lighter;">',"Approximate time reading tweets in the last month: ",'</h4>', '<strong>', '<br />', 
+          '<h1 style="text-align:center; color: #2f96b4; font-weight: bold;">'. convertToHoursMins($time_Reading, '%d hours, %d minutes'),'</strong>', '</h1>', '<br />', '</div>';
+   echo '<br />';
+   echo '</div>';
+
+  // tweet to person 
+   echo '<div class="row-fluid">';
+   echo '<div class="span12">';
+   echo '<h3 style="text-align:center; font-weight:lighter; color:#2f96b4; ">';
+   
+   // switch to get tweeter type
+   switch ($tweets) {     
+     case $tweets <= 500:
+         echo "@$username doesn't really tweet that much.";
+          break;
+      
+       case $tweets <= 750:
+         echo "@$username tweets about as much as a teenager.";
+          break;
+      
+      case $tweets <= 2250:
+         echo "@$username tweets more than a teenager.";
+          break;
+      
+      case $tweets <= 3500:
+         echo "@$username tweets like a person on Twitter, who tweets a lot, but not that much.";
+          break;
+      
+       case $tweets <= 5500:
+         echo "@$username tweets, a lot.";
+          break;
+      
+       case $tweets <= 7500:
+         echo "@$username tweets, a lot, a lot.";
+          break;
+      
+      case $tweets <= 10000:
+         echo "@$username tweets like a teenage girl on a roadtrip with her grandparents.";
+          break; 
+      
+      case $tweets <= 50000:
+         echo "@$username is legit.";
+          break; 
+      
+      case $tweets >= 50001:
+         echo "@$username most likely tweets a lot of news.";
+          break; 
+  }
+    echo '</h3>';
+    echo '<h4 style="text-align:center; color: #cccccc; font-weight: lighter;">',"let them know.",'</h4>';
+    echo '<div class="center"><a href="https://twitter.com/intent/tweet?screen_name='.$username.'&text=Check%20out%20your%20Twitter%20stats%20from%20http://evanwknight.com/twitter.php%20via%20@EvanNite?username='.$username.'&submit=submit" class="twitter-mention-button" data-size="large" data-related="'.$username.'">Tweet to'.$username .'</a>
+          <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>','</div>';
+    echo '</div>';
+    
+    
+    echo '<div id="twitter">','</div>';
+    
+    }         
+    
+// else statement to main if
+            else {
+                   echo '<h3 style="text-align:center;">',"Type in a valid username!",'</h3>';
+            }
+            
+            ?>
