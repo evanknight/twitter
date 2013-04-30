@@ -13,10 +13,7 @@
             
    if (isset($_GET['submit'])) {
    $username = $_GET["username"]; 
-// i made this and I am so proud lol          
-  
-   
- 
+          
   echo '<br />', '<div class="alert alert-success">Success! Here are stats for @'.$username.'</div>';
    
   $url = "http://twitter.com/users/show/" . $username;
